@@ -4,3 +4,5 @@ __pycache__/
 *.duckdb
 .dlt/secrets.toml
 /tmp_pipeline_data/
+*.egg-info/
+.superpowers/
