@@ -39,20 +39,46 @@ az containerapp env create \
   --location $LOCATION
 ```
 
-## Step 4 — Create the scheduled Container Apps Job
-
-Replace `CRON_SCHEDULE` with your desired cron expression (e.g. `"0 6 * * *"` for 6 AM daily).
+## Step 4 — Create a managed identity and get the Key Vault secret URI
 
 ```bash
+# Create a managed identity
+az identity create \
+  --name api-warehouse-identity \
+  --resource-group $RESOURCE_GROUP
+
+MANAGED_IDENTITY_ID=$(az identity show \
+  --name api-warehouse-identity \
+  --resource-group $RESOURCE_GROUP \
+  --query id -o tsv)
+
+# Get the Key Vault secret URI
+KEY_VAULT_SECRET_URI=$(az keyvault secret show \
+  --vault-name $KV_NAME \
+  --name API-KEY \
+  --query id -o tsv)
+
+# Assign the managed identity to Key Vault (grant Secret User role)
+az role assignment create \
+  --role "Key Vault Secrets User" \
+  --assignee-object-id $(az identity show --name api-warehouse-identity --resource-group $RESOURCE_GROUP --query principalId -o tsv) \
+  --scope /subscriptions/$(az account show --query id -o tsv)/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.KeyVault/vaults/$KV_NAME
+```
+
+## Step 5 — Create the scheduled Container Apps Job
+
+```bash
+CRON_SCHEDULE="0 6 * * *"  # daily 06:00 UTC
+
 az containerapp job create \
   --name api-warehouse-job \
   --resource-group $RESOURCE_GROUP \
   --environment $ENV_NAME \
   --trigger-type Schedule \
-  --cron-expression "CRON_SCHEDULE" \
+  --cron-expression "$CRON_SCHEDULE" \
   --image $IMAGE \
   --registry-server $ACR_NAME.azurecr.io \
-  --secrets "api-key=keyvaultref:<KEY_VAULT_SECRET_URI>,identityref:<MANAGED_IDENTITY_ID>" \
+  --secrets "api-key=keyvaultref:$KEY_VAULT_SECRET_URI,identityref:$MANAGED_IDENTITY_ID" \
   --env-vars "API_KEY=secretref:api-key"
 ```
 

@@ -13,6 +13,9 @@ PROJECT_ID=your-gcp-project-id
 REGION=us-central1
 IMAGE=gcr.io/$PROJECT_ID/api-warehouse-pipeline:latest
 
+# Authenticate Docker to Container Registry
+gcloud auth configure-docker gcr.io
+
 docker build -t $IMAGE .
 docker push $IMAGE
 ```

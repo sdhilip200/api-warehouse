@@ -64,17 +64,16 @@ aws ecs register-task-definition --cli-input-json file://task-definition.json
 
 ## Step 4 — Schedule with EventBridge
 
-Replace `CRON_SCHEDULE` with an EventBridge cron expression (e.g. `cron(0 6 * * ? *)` for 6 AM UTC daily).
-
 ```bash
 CLUSTER=my-ecs-cluster
 SUBNET_ID=subnet-xxxxxxxx
 SG_ID=sg-xxxxxxxx
 TASK_ROLE_ARN=arn:aws:iam::ACCOUNT:role/ecsTaskRole
+CRON_SCHEDULE="cron(0 6 * * ? *)"  # daily 06:00 UTC — EventBridge cron syntax
 
 aws events put-rule \
   --name api-warehouse-schedule \
-  --schedule-expression "CRON_SCHEDULE" \
+  --schedule-expression "$CRON_SCHEDULE" \
   --state ENABLED
 
 aws events put-targets \
