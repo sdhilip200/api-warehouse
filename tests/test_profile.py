@@ -35,3 +35,14 @@ def test_profile_records_counts_and_numeric_stats():
     assert ts["min"] == "2026-01-01T00:00:00Z"
     assert ts["max"] == "2026-03-01T00:00:00Z"
     assert ts["null_count"] == 1
+
+def test_empty_string_counts_as_null():
+    rows = [{"code": ""}, {"code": "a"}]
+    p = profile_records(rows)
+    col = p["columns"]["code"]
+    assert col["type"] == "text"
+    assert col["null_count"] == 1
+    assert col["distinct_count"] == 1
+
+def test_classify_bool_is_not_numeric():
+    assert classify_column([True, False]) == "text"
