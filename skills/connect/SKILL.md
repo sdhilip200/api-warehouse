@@ -56,7 +56,7 @@ them to one of the two approved storage methods:
 ### Option A — Environment variable (recommended for CI/CD)
 
 ```bash
-export MY_API_TOKEN="your-actual-token-here"
+export MY_API_TOKEN="<your-token-value>"
 ```
 
 Replace `MY_API_TOKEN` with the env-var name that matches the `token_env`
@@ -70,7 +70,7 @@ Create or edit `.dlt/secrets.toml` in the project root (already in
 
 ```toml
 [sources.my_source]
-MY_API_TOKEN = "your-actual-token-here"
+MY_API_TOKEN = "<your-token-value>"
 ```
 
 Replace `my_source` with the dlt source name and `MY_API_TOKEN` with the
@@ -90,14 +90,14 @@ no pipeline code is needed at this stage.
 
 ```bash
 # Bearer token example
-curl -s -o /dev/null -w "%{http_code}" \
+curl -s -D - -o /dev/null -w "%{http_code}" \
   -H "Authorization: Bearer $MY_API_TOKEN" \
   "https://api.example.com/v1/me"
 ```
 
 ```bash
 # API-key header example
-curl -s -o /dev/null -w "%{http_code}" \
+curl -s -D - -o /dev/null -w "%{http_code}" \
   -H "X-API-Key: $MY_API_KEY" \
   "https://api.example.com/v1/ping"
 ```
