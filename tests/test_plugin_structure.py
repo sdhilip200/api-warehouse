@@ -56,3 +56,10 @@ def test_validate_skill_present():
     body = p.read_text()
     assert "render_validation" in body
     assert "skipped" in body  # honesty about unavailable checks
+
+def test_schedule_skill_and_templates_present():
+    assert (ROOT / "skills" / "schedule" / "SKILL.md").exists()
+    df = (ROOT / "templates" / "Dockerfile").read_text()
+    assert "python" in df.lower()
+    for plat in ["cloud-run", "azure-container-apps", "aws-ecs"]:
+        assert (ROOT / "templates" / "deploy" / f"{plat}.md").exists()
