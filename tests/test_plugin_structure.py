@@ -20,3 +20,18 @@ def test_reference_docs_exist_and_nonempty():
         p = ROOT / "references" / f"{ref}.md"
         assert p.exists(), f"missing reference: {ref}"
         assert len(p.read_text().strip()) > 200
+
+
+SKILLS = ["api-warehouse", "connect", "assess", "land", "validate", "schedule"]
+
+def _frontmatter(path):
+    text = path.read_text()
+    assert text.startswith("---"), f"{path} missing frontmatter"
+    fm = text.split("---", 2)[1]
+    return fm
+
+def test_connect_skill_present_with_frontmatter():
+    p = ROOT / "skills" / "connect" / "SKILL.md"
+    assert p.exists()
+    fm = _frontmatter(p)
+    assert "name:" in fm and "description:" in fm
