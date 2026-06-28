@@ -16,6 +16,12 @@ def test_render_assessment_contains_key_facts():
     assert "updated_since" in html
     assert "/posts" in html
 
+def test_render_assessment_shows_reason_when_not_supported():
+    a = {"api_name": "X", "base_url": "u", "incremental": {"supported": False, "reason": "no timestamp fields"}, "endpoints": []}
+    html = render_assessment(a)
+    assert "NO" in html
+    assert "no timestamp fields" in html
+
 def test_render_validation_shows_statuses_and_summary():
     result = {
         "ok": False,

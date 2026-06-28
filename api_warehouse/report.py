@@ -23,7 +23,7 @@ def render_assessment(assessment: dict) -> str:
     base = escape(str(assessment.get("base_url", "")))
     inc = assessment.get("incremental", {})
     verdict = "YES" if inc.get("supported") else "NO"
-    evidence = escape(str(inc.get("evidence", "")))
+    evidence = escape(str(inc.get("evidence") or inc.get("reason") or ""))
     rows = ""
     for ep in assessment.get("endpoints", []):
         rows += (

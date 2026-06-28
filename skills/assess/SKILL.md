@@ -204,6 +204,7 @@ assessment = {
 html = render_assessment(assessment)
 with open("assessment.html", "w") as f:
     f.write(html)
+# Note: render_assessment shows incremental detail from the `evidence` key (supported) or the `reason` key (not supported); include one of them in the incremental dict.
 ```
 
 ---
