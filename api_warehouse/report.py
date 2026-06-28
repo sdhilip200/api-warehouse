@@ -57,7 +57,7 @@ def render_validation(result: dict) -> str:
             "<tr>"
             f"<td>{escape(str(c['name']))}</td>"
             f"<td>{escape(str(c['kind']))}</td>"
-            f"<td class='{status}'>{status}</td>"
+            f"<td class='{escape(status)}'>{escape(status)}</td>"
             f"<td>{escape(str(c['detail']))}</td>"
             "</tr>"
         )
