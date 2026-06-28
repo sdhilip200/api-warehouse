@@ -55,7 +55,7 @@ with open("endpoints.json") as f:
     spec = json.load(f)
 
 # Locate the target endpoint
-endpoint = next(ep for ep in spec["endpoints"] if ep["name"] == TARGET_ENDPOINT)
+endpoint = next(ep for ep in spec["resources"] if ep["name"] == TARGET_ENDPOINT)
 url = spec["base_url"].rstrip("/") + endpoint["path"]
 headers = {}
 if spec["auth"]["type"] == "bearer":

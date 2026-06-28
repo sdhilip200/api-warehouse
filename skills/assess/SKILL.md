@@ -96,7 +96,7 @@ or
 ```
 
 Rules:
-- `"supported": true` requires **both** a cursor/timestamp field in the response **and** a filter param to pass it back.
+- `"supported": true` requires a named filter parameter **OR** a named cursor/updated-at response field as evidence — either is sufficient (requiring both wrongly excludes valid change-feed endpoints).
 - Never set `"supported": true` without concrete evidence from the docs.
 - Never guess — if the evidence is ambiguous, set `false` and explain.
 

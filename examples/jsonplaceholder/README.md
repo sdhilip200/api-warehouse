@@ -32,16 +32,19 @@ The `assess` skill fetches the API docs, probes the available endpoints, and pro
 
 **`endpoints.json`** — machine-readable endpoint spec for the `land` skill:
 ```json
-[
-  {
-    "name": "posts",
-    "path": "/posts",
-    "method": "GET",
-    "primary_key": "id",
-    "incremental_cursor": null,
-    "auth": null
-  }
-]
+{
+  "base_url": "https://jsonplaceholder.typicode.com",
+  "auth": {"type": "none"},
+  "paginator": {"type": "single_page"},
+  "resources": [
+    {
+      "name": "posts",
+      "path": "/posts",
+      "primary_key": "id",
+      "incremental": null
+    }
+  ]
+}
 ```
 
 **`samples/posts.json`** — first 3 rows of `/posts` for client sign-off:
