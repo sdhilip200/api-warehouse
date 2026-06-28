@@ -14,7 +14,7 @@ description: >
 
 This skill generates a dlt pipeline script from the `endpoints.json` produced by
 `assess`, then runs it to land raw data in the chosen destination. No transformation
-logic is added here — that belongs in a later step.
+logic is added here. Transformation (dbt, modeling) is out of scope for this plugin and belongs in a separate downstream pipeline.
 
 **Pre-requisite:** `endpoints.json` must exist in the project root. Run `assess` first
 if it is missing.
@@ -28,6 +28,9 @@ Ask:
 > Which destination should we land the data into?
 > Common choices: **DuckDB** (local file, good for dev), **BigQuery**, **Snowflake**,
 > **Redshift**, **Postgres**.
+> A files/blob destination (Parquet or CSV via dlt's filesystem destination) is also
+> supported — see `../../references/destinations.md` for the `dlt.destinations.filesystem`
+> call and the environment variables it requires.
 >
 > See `references/destinations.md` for the exact `dlt.destinations.*` call and the
 > environment variables each destination requires.

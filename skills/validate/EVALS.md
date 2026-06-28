@@ -9,13 +9,16 @@ available). Return `pass` / `fail` / `skipped` with one line of evidence per che
 ## Checks
 
 1. **Both sides profiled.**
-   The run log shows `profile_records` called on `source_records` and on `loaded_records`
-   separately, producing two profile dicts. `skipped` if the log is unavailable.
+   `validation.html` surfaces evidence that both sides were profiled: the report must
+   show a source sample size (record count from the API) and a loaded sample size
+   (record count from the destination) as distinct numeric values. `fail` if the report
+   contains no evidence that both sides were measured.
 
 2. **`reconcile` received both profiles.**
-   The run log shows `reconcile(source_profile, loaded_profile)` called with the dicts
-   from check 1, and its return value was passed directly to `render_validation`.
-   `skipped` if the log is unavailable.
+   `validation.html` contains at least one check row that compares a source-side value
+   to a loaded-side value (e.g. row counts, a numeric sum, or a timestamp range), proving
+   `reconcile` had data from both sides. `fail` if the report shows only one side or
+   shows no cross-side comparison at all.
 
 3. **`validation.html` exists and is non-empty.**
    The file exists on disk and contains at least one `<tr>` row in the checks table.

@@ -72,7 +72,6 @@ Tell the user:
 > Secrets are injected at runtime via your platform's secret manager — nothing
 > sensitive is in the image.
 >
-> When you are ready to auto-deploy from Claude Code (v2), run `/schedule` again.
 
 ---
 

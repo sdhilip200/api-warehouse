@@ -16,6 +16,6 @@ Run these checks via the loop in `../../references/running-evals.md`. A separate
 | 6 | assessment-html-verdict | Content of `assessment.html` | Contains the word "YES" or "NO" (the incremental verdict rendered by `render_assessment`) and a non-empty evidence/reason string beside it |
 | 7 | samples-present | `samples/` directory | At least one `.json` file exists for the primary resource endpoint |
 | 8 | no-bare-guess | Incremental verdict across all artifacts | No instance of "likely", "probably", "may support", or "unclear" without an accompanying `supported: false` and a reason |
-| 9 | build-rest-api-compat | `endpoints.json` fed to `build_rest_api_config` | Would not raise `KeyError` or `ValueError` — verify `auth.type` is one of `none`/`bearer`/`api_key`; `api_key` entries have `name` and `location`; `bearer` and `api_key` entries have `token_env` |
+| 9 | build-rest-api-compat | `endpoints.json` schema validity | Passes static schema validation: `auth.type` is one of `none`/`bearer`/`api_key`; `api_key` entries have `name` and `location`; `bearer`/`api_key` entries have `token_env`; `resources[]` entries have `name`, `path`, `primary_key`. |
 
 `skipped` is valid only when the check cannot be computed from the artifacts (e.g., check 1 cannot be run if the grader was never shown the input-guard exchange).

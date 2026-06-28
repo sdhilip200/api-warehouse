@@ -13,4 +13,4 @@ the grading loop.
 | 4 | Scope guard respected | No transformation, renaming, or modelling operations appear in the land step output or the loaded table schema | pass / fail |
 | 5 | No secret values leaked | API tokens, passwords, and connection strings do not appear as literal values anywhere in the transcript or generated files | pass / fail |
 | 6 | Validation passed before schedule ran | The validate report shows all checks pass (or explicitly skipped) before the schedule step was invoked | pass / fail / skipped if schedule was not reached |
-| 7 | MEMORY.md updated | A new entry was appended to MEMORY.md recording any notable run quirk (or a note that none occurred) | pass / fail |
+| 7 | MEMORY.md updated | If a notable run quirk occurred, a new entry was appended to MEMORY.md recording it; verify the transcript shows MEMORY.md was consulted and written. If no quirks occurred, this check is `skipped`. | pass / fail / skipped if no quirks occurred |

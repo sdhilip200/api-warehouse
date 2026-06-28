@@ -116,8 +116,9 @@ Invoke: `/schedule`
 
 Packages the pipeline into a container image using the project `Dockerfile`,
 generates a platform-specific deploy manifest (Cloud Run, Azure Container Apps,
-or AWS ECS), and registers the cron schedule. After this step the pipeline runs
-automatically on the agreed cadence.
+or AWS ECS), and registers the cron schedule. After this step, follow
+`deploy/<platform>.md` to run the pipeline on the agreed cadence yourself —
+v1 produces a deploy-ready bundle, it does not auto-deploy.
 
 ---
 
