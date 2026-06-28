@@ -30,15 +30,18 @@ MY_API_TOKEN = "your-actual-token-here"
 DB_PASSWORD = "your-db-password-here"
 ```
 
-dlt reads this file automatically; you never need to load it manually.
-
 **Never commit `.dlt/secrets.toml` to version control.**
+
+> **Key scoping note:** dlt's `secrets.toml` scopes keys under a section path (e.g. `sources.<name>.MY_API_TOKEN`). When you load values from `secrets.toml` and pass them to `build_rest_api_config`, the `secrets` dict must be keyed by the **bare env-var name** used in the spec's `token_env` (e.g. `"MY_API_TOKEN"`), not the full dotted path. Extract the value at the right section before passing it in.
 
 ## What the Plugin Does
 
+**The plugin does NOT auto-resolve secrets.** `build_rest_api_config(spec, secrets)` takes a plain Python `secrets` dict that **the caller must populate** — by reading environment variables, loading `.dlt/secrets.toml`, or another mechanism. The plugin never reads env vars or `secrets.toml` on its own.
+
 When `build_rest_api_config(spec, secrets)` is called:
 - `spec["auth"]["token_env"]` holds the env-var *name* (e.g. `"MY_API_TOKEN"`).
-- `secrets` is a plain dict populated at runtime from env or `secrets.toml`.
+- `secrets` is a plain dict the **caller** has already populated with secret values, keyed by the env-var name (e.g. `{"MY_API_TOKEN": "<actual-token>"}`).
+- The plugin looks up `secrets[spec["auth"]["token_env"]]` to retrieve the token — if the caller has not populated `secrets`, the lookup will raise a `KeyError`.
 - The resolved token value is placed into the dlt config object only — it is not stored, logged, or returned to the caller in a way that persists to disk.
 
 ## Checklist Before Sharing Generated Code

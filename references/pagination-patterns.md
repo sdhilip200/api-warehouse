@@ -74,26 +74,7 @@ Use when the API accepts `offset` and `limit` (or `skip`/`count`) query paramete
 
 ---
 
-## 4. Cursor / Next Token
-
-Use when the API returns an opaque cursor or `next_token` in the response body.
-
-**Detection cues:** Response contains a `cursor`, `next_cursor`, `next_token`, or `continuation_token` field. The next request sends this value back as a query param.
-
-```json
-{
-  "type": "cursor",
-  "cursor_path": "meta.next_cursor",
-  "cursor_param": "cursor"
-}
-```
-
-- `cursor_path`: dot-path to the cursor value in the response JSON.
-- `cursor_param`: query parameter name to send the cursor back.
-
----
-
-## 5. JSON Link (next URL in response body)
+## 4. JSON Link (next URL in response body)
 
 Use when the API embeds the full URL of the next page in the response body.
 
@@ -111,7 +92,34 @@ Use when the API embeds the full URL of the next page in the response body.
 
 ---
 
-## 6. Link Header (HTTP `Link: <url>; rel="next"`)
+## Out-of-Spec (dlt-Native) Paginator Types
+
+The four types above (`single_page`, `page_number`, `offset`, `json_link`) are the **formally-documented spec types** — the only ones the plugin contract explicitly enumerates and tests.
+
+The two types below (`cursor` and `header_link`) are **dlt-native paginators passed through unmodified** by `pipeline.py` (the plugin simply forwards any `paginator` dict to dlt without inspecting the `type` field). They work at runtime if dlt supports them, but they are **NOT part of the four-type formal spec contract**. Use them only if you have confirmed the exact dlt paginator key names against the installed dlt version.
+
+### cursor (dlt-native, out-of-spec)
+
+> **Not a formal spec type.** Passed through to dlt unmodified. Verify key names against your dlt version before using.
+
+Use when the API returns an opaque cursor or `next_token` in the response body.
+
+**Detection cues:** Response contains a `cursor`, `next_cursor`, `next_token`, or `continuation_token` field. The next request sends this value back as a query param.
+
+```json
+{
+  "type": "cursor",
+  "cursor_path": "meta.next_cursor",
+  "cursor_param": "cursor"
+}
+```
+
+- `cursor_path`: dot-path to the cursor value in the response JSON.
+- `cursor_param`: query parameter name to send the cursor back.
+
+### header_link (dlt-native, out-of-spec)
+
+> **Not a formal spec type.** Passed through to dlt unmodified. Verify key names against your dlt version before using.
 
 Use when the API follows RFC 5988 and puts the next URL in an HTTP `Link` response header.
 
@@ -131,11 +139,11 @@ No additional fields are required.
 
 ## Selection Guide
 
-| Signal in API response / docs | Use paginator type |
-|---|---|
-| No next-page signal | `single_page` |
-| `?page=` query param | `page_number` |
-| `?offset=` + `?limit=` | `offset` |
-| Opaque cursor token in body | `cursor` |
-| Full URL in response body (`next`) | `json_link` |
-| `Link` HTTP header | `header_link` |
+| Signal in API response / docs | Use paginator type | Formal spec type? |
+|---|---|---|
+| No next-page signal | `single_page` | Yes |
+| `?page=` query param | `page_number` | Yes |
+| `?offset=` + `?limit=` | `offset` | Yes |
+| Full URL in response body (`next`) | `json_link` | Yes |
+| Opaque cursor token in body | `cursor` *(dlt-native, out-of-spec)* | No |
+| `Link` HTTP header | `header_link` *(dlt-native, out-of-spec)* | No |

@@ -72,7 +72,7 @@ Emit one of these two JSON objects as the output of an incremental assessment:
 }
 ```
 
-**Rule: never claim `supported: true` without a named parameter AND a named response field as evidence.** Guessing leads to silent data gaps.
+**Rule: never claim `supported: true` without a named filter parameter OR a named cursor/updated-at response field as evidence.** A cursor-in-response change feed with no filter param can still be incrementally loadable; requiring both would cause valid incremental endpoints to be mis-classified as unsupported. Guessing (claiming `supported: true` with no evidence at all) leads to silent data gaps.
 
 ---
 
