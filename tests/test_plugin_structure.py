@@ -68,3 +68,18 @@ def test_schedule_skill_and_templates_present():
     assert "python" in df.lower()
     for plat in ["cloud-run", "azure-container-apps", "aws-ecs"]:
         assert (ROOT / "templates" / "deploy" / f"{plat}.md").exists()
+
+def test_orchestrator_lists_full_loop():
+    body = (ROOT / "skills" / "api-warehouse" / "SKILL.md").read_text()
+    for step in ["connect", "assess", "land", "validate", "schedule"]:
+        assert step in body
+    assert "checkpoint" in body.lower()
+
+def test_all_skills_have_unique_names():
+    import re
+    names = []
+    for s in SKILLS:
+        fm = _frontmatter(ROOT / "skills" / s / "SKILL.md")
+        m = re.search(r"name:\s*(\S+)", fm)
+        names.append(m.group(1))
+    assert len(names) == len(set(names))
