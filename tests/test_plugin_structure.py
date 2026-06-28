@@ -49,3 +49,10 @@ def test_land_skill_present():
     body = p.read_text()
     assert "build_rest_api_config" in body
     assert "destinations.md" in body
+
+def test_validate_skill_present():
+    p = ROOT / "skills" / "validate" / "SKILL.md"
+    assert p.exists()
+    body = p.read_text()
+    assert "render_validation" in body
+    assert "skipped" in body  # honesty about unavailable checks
