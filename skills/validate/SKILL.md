@@ -86,10 +86,12 @@ row-count check will be `skipped` — record the quirk in `MEMORY.md` for future
 Pull the same number of rows from the loaded table:
 
 ```python
-# DuckDB example
+# DuckDB example (pandas-free — uses fetchall + con.description)
 import duckdb
 con = duckdb.connect("warehouse.duckdb")
-loaded_records = con.execute(f"SELECT * FROM {WAREHOUSE_TABLE} LIMIT {ROW_LIMIT}").df().to_dict(orient="records")
+rows = con.execute(f"SELECT * FROM {WAREHOUSE_TABLE} LIMIT {ROW_LIMIT}").fetchall()
+cols = [c[0] for c in con.description]
+loaded_records = [dict(zip(cols, r)) for r in rows]
 print(f"Loaded sample: {len(loaded_records)} records")
 ```
 
@@ -99,10 +101,14 @@ Adapt to BigQuery / Snowflake / Postgres using the destination's native client.
 
 ## Step 4 — Profile Both Sides
 
+Note: dlt snake-cases camelCase field names on load (e.g. `userId` → `user_id`). Normalize
+source record keys before profiling so columns align and are not spuriously marked `skipped`.
+
 ```python
 from api_warehouse.profile import profile_records
+from api_warehouse.normalize import normalize_record_keys
 
-source_profile = profile_records(source_records)
+source_profile = profile_records(normalize_record_keys(source_records))
 loaded_profile = profile_records(loaded_records)
 
 print("Source profile:", source_profile["row_count"], "rows,", len(source_profile["columns"]), "columns")

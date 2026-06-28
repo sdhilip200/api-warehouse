@@ -16,6 +16,7 @@ spec = {
 ```
 
 If `paginator` is absent or `{"type": "single_page"}`, dlt makes a single request and stops.
+Note: for single-page APIs, dlt may log "Fallback paginator used: SinglePagePaginator" — this is expected and harmless; the builder intentionally omits the paginator key for `single_page`.
 
 ---
 
