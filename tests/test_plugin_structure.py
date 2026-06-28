@@ -42,3 +42,10 @@ def test_assess_skill_present():
     body = p.read_text()
     assert "endpoints.json" in body
     assert "not API documentation" in body  # input guard wording present
+
+def test_land_skill_present():
+    p = ROOT / "skills" / "land" / "SKILL.md"
+    assert p.exists()
+    body = p.read_text()
+    assert "build_rest_api_config" in body
+    assert "destinations.md" in body
