@@ -149,7 +149,7 @@ Show the full generated script to the user and ask them to confirm before runnin
 
 Before running the script, spin up a grader agent with a clean context. Give it
 `EVALS.md` and the generated `pipeline_land.py`. Follow the loop defined in
-`../../references/running-evals.md`. Fix any `fail` verdicts before proceeding.
+`../../references/running-evals.md`. Fix any `fail` verdicts before proceeding. On platforms without subagents (e.g. Codex), run the same checklist inline in a fresh reasoning pass instead — see `../../references/running-evals.md`.
 
 ---
 

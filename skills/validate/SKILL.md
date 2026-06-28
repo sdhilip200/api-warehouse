@@ -162,7 +162,7 @@ Before presenting results to the user, run the eval loop defined in
 `../../references/running-evals.md` using the checks in `EVALS.md`. Spin up a grader
 agent with a clean context, pass it `EVALS.md` and `validation.html`, and iterate until
 every check is `pass` or `skipped` (or 5 rounds have elapsed). Report any remaining
-failures plainly.
+failures plainly. On platforms without subagents (e.g. Codex), run the same checklist inline in a fresh reasoning pass instead — see `../../references/running-evals.md`.
 
 ---
 

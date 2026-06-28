@@ -80,7 +80,7 @@ Tell the user:
 After producing the bundle, spin up a grader agent with a clean context. Give it
 `EVALS.md` and the contents of `deploy/`, and nothing else. Run the eval loop
 described in `../../references/running-evals.md`. Fix any `fail` verdicts before
-reporting done to the user.
+reporting done to the user. On platforms without subagents (e.g. Codex), run the same checklist inline in a fresh reasoning pass instead — see `../../references/running-evals.md`.
 
 For user-facing text in the bundle and instructions, apply the checks in
 `../../references/anti-slop.md`: cut filler verbs, hedging openers, and any

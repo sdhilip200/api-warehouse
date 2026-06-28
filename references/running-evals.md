@@ -17,6 +17,10 @@ The agent that produced an artifact is a poor judge of it — it already believe
 5. If any check is `fail`, hand the failures back to the original skill agent, which revises the artifact, then go to step 2.
 6. Cap the loop at **5 rounds**. If checks still fail after 5 rounds, stop and report the remaining failures plainly rather than looping forever — a stuck check usually means the API (or the user's intent) genuinely can't satisfy it, which is information the user needs.
 
+## Platforms without subagents
+
+On platforms that have subagents (e.g. Claude Code), run the grader as a separate agent so it has a clean context. On platforms without subagents (e.g. Codex), run the same `EVALS.md` checklist inline in a fresh reasoning pass instead — read the artifact, evaluate each check, report verdicts, then revise if any fail. The behavior is identical; only the isolation mechanism differs.
+
 ## Writing good checks
 
 A check earns its place only if it can fail for a real reason. Aim for checks that are:

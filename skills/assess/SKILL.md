@@ -209,7 +209,7 @@ with open("assessment.html", "w") as f:
 
 ### 6c. Self-check (eval loop)
 
-After writing both artifacts, run the eval loop defined in `../../references/running-evals.md` using the checklist in `EVALS.md`. Spin up a separate grader agent with a clean context; give it only `EVALS.md`, `endpoints.json`, `assessment.html`, and any `samples/` files. Fix any `fail` verdicts and re-run until all checks are `pass` or `skipped`, up to 5 rounds.
+After writing both artifacts, run the eval loop defined in `../../references/running-evals.md` using the checklist in `EVALS.md`. Spin up a separate grader agent with a clean context; give it only `EVALS.md`, `endpoints.json`, `assessment.html`, and any `samples/` files. Fix any `fail` verdicts and re-run until all checks are `pass` or `skipped`, up to 5 rounds. On platforms without subagents (e.g. Codex), run the same checklist inline in a fresh reasoning pass instead — see `../../references/running-evals.md`.
 
 ### 6d. Update `MEMORY.md`
 

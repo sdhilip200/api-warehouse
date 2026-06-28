@@ -138,7 +138,7 @@ After reporting the result, run the self-grading loop described in
 `../../references/running-evals.md` using the checklist in `EVALS.md`.
 Spin up a separate grader agent with a clean context, pass it `EVALS.md`
 and the smoke-test output, and iterate until every check is `pass` or
-`skipped` (cap at 5 rounds).
+`skipped` (cap at 5 rounds). On platforms without subagents (e.g. Codex), run the same checklist inline in a fresh reasoning pass instead — see `../../references/running-evals.md`.
 
 ---
 
