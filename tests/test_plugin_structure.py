@@ -35,3 +35,10 @@ def test_connect_skill_present_with_frontmatter():
     assert p.exists()
     fm = _frontmatter(p)
     assert "name:" in fm and "description:" in fm
+
+def test_assess_skill_present():
+    p = ROOT / "skills" / "assess" / "SKILL.md"
+    assert p.exists()
+    body = p.read_text()
+    assert "endpoints.json" in body
+    assert "not API documentation" in body  # input guard wording present
