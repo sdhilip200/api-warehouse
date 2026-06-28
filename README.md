@@ -7,9 +7,11 @@
 
 ---
 
-## Demo
+## How it works
 
-*Demo GIF coming soon — paste any API docs link and watch it produce an assessment + load data.*
+![api-warehouse flow: any API docs → connect → assess → checkpoint → land → validate → schedule → warehouse](assets/flow.svg)
+
+*Demo GIF coming soon — paste any API docs link and watch it produce an assessment, then load the data. (Recording in progress.)*
 
 ---
 
