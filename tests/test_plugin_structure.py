@@ -83,3 +83,10 @@ def test_all_skills_have_unique_names():
         m = re.search(r"name:\s*(\S+)", fm)
         names.append(m.group(1))
     assert len(names) == len(set(names))
+
+def test_readme_has_install_and_positioning():
+    r = (ROOT / "README.md").read_text()
+    assert "/plugin marketplace add https://github.com/sdhilip200/api-warehouse" in r
+    assert "dlt" in r and "printing-press" in r  # honest positioning section
+    assert (ROOT / "CONTRIBUTING.md").exists()
+    assert (ROOT / ".github" / "workflows" / "ci.yml").exists()
