@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+*.duckdb
+.dlt/secrets.toml
+/tmp_pipeline_data/
