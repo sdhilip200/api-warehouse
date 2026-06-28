@@ -87,6 +87,13 @@ pipeline = dlt.pipeline(
 )
 load_info = pipeline.run(source)
 print(load_info)
+# Rows loaded per resource (verifiable by eval loop):
+try:
+    for table, count in pipeline.last_trace.last_normalize_info.row_counts.items():
+        if not table.startswith("_dlt"):
+            print(f"  {table}: {count} rows")
+except Exception:
+    pass
 ```
 
 ### Variant B — Bearer Token Auth
@@ -119,6 +126,13 @@ pipeline = dlt.pipeline(
 )
 load_info = pipeline.run(source)
 print(load_info)
+# Rows loaded per resource (verifiable by eval loop):
+try:
+    for table, count in pipeline.last_trace.last_normalize_info.row_counts.items():
+        if not table.startswith("_dlt"):
+            print(f"  {table}: {count} rows")
+except Exception:
+    pass
 ```
 
 Adapt the `dlt.destinations.*` call to match the user's chosen destination (see
