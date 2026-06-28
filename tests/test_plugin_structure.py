@@ -104,3 +104,14 @@ def test_readme_has_install_and_positioning():
     assert "dlt" in r and "printing-press" in r  # honest positioning section
     assert (ROOT / "CONTRIBUTING.md").exists()
     assert (ROOT / ".github" / "workflows" / "ci.yml").exists()
+
+def test_codex_plugin_manifest_valid():
+    m = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text())
+    assert m["name"] == "api-warehouse"
+    assert m["skills"] == "./skills/"
+
+def test_agents_md_present_and_lists_skills():
+    body = (ROOT / "AGENTS.md").read_text()
+    for s in ["connect", "assess", "land", "validate", "schedule"]:
+        assert s in body, f"AGENTS.md does not mention {s}"
+    assert "Codex" in body

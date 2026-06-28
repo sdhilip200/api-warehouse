@@ -154,11 +154,37 @@ pip install "dlt[duckdb]"          # local default; add bigquery/snowflake/postg
 pip install "git+https://github.com/sdhilip200/api-warehouse"
 ```
 
+### Codex
+
+**Codex CLI:**
+
+```bash
+codex plugin marketplace add sdhilip200/api-warehouse
+codex plugin add api-warehouse@api-warehouse
+```
+
+**Codex App:** open **Plugins** → **Add marketplace**, enter Source `sdhilip200/api-warehouse`, Git ref `main`, leave Sparse paths blank, then install **api-warehouse** and restart Codex.
+
+The same `land` / `validate` Python prerequisites above apply. Codex reads [`AGENTS.md`](AGENTS.md) as its instructions file and loads the skills from `skills/`.
+
+### Other agents
+
+The skills are plain Markdown and platform-neutral. Any agent that can read [`AGENTS.md`](AGENTS.md) and load a `skills/` folder (Cursor, Copilot, etc.) can use them — point it at this repository and start from `skills/api-warehouse/SKILL.md`.
+
 ### Existing installs (update)
+
+**Claude Code:**
 
 ```text
 /plugin marketplace update api-warehouse
 /plugin update api-warehouse
+```
+
+**Codex CLI:**
+
+```bash
+codex plugin marketplace upgrade api-warehouse
+codex plugin add api-warehouse@api-warehouse
 ```
 
 ---
