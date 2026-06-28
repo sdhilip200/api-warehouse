@@ -1,0 +1,14 @@
+# This file prevents secrets and local artifacts from being baked into the Docker image.
+# It MUST be present alongside the Dockerfile whenever `docker build` is run.
+# Without it, `COPY . .` would include local secrets and credentials in the image layers.
+
+.dlt/secrets.toml
+.dlt/.sources
+.env
+*.duckdb
+.git
+__pycache__/
+*.pyc
+.venv/
+tests/
+.superpowers/

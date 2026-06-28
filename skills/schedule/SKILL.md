@@ -41,9 +41,10 @@ Also ask:
 Create a `deploy/` directory in the user's project with:
 
 1. **`deploy/Dockerfile`** — copy from `templates/Dockerfile` (in the plugin).
-2. **`deploy/requirements.txt`** — a starter file listing the user's pipeline dependencies.
+2. **`deploy/.dockerignore`** — copy from `templates/.dockerignore` (in the plugin). **This file is required** — without it `COPY . .` in the Dockerfile will bake local secrets into the image. Never omit it.
+3. **`deploy/requirements.txt`** — a starter file listing the user's pipeline dependencies.
    At minimum include: `dlt`, `requests`. Add any extras the user's `pipeline.py` imports.
-3. **`deploy/<platform>.md`** — copy from `templates/deploy/<platform>.md` and fill in:
+4. **`deploy/<platform>.md`** — copy from `templates/deploy/<platform>.md` and fill in:
    - Replace `CRON_SCHEDULE` with the cron expression the user provided.
    - Replace placeholder project/account IDs with the user's values if known.
 

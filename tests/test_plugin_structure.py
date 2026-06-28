@@ -57,6 +57,11 @@ def test_validate_skill_present():
     assert "render_validation" in body
     assert "skipped" in body  # honesty about unavailable checks
 
+def test_dockerignore_excludes_secrets():
+    di = (ROOT / "templates" / ".dockerignore").read_text()
+    assert ".dlt/secrets.toml" in di
+    assert ".env" in di
+
 def test_schedule_skill_and_templates_present():
     assert (ROOT / "skills" / "schedule" / "SKILL.md").exists()
     df = (ROOT / "templates" / "Dockerfile").read_text()
