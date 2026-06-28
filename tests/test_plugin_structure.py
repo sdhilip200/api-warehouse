@@ -105,6 +105,12 @@ def test_readme_has_install_and_positioning():
     assert (ROOT / "CONTRIBUTING.md").exists()
     assert (ROOT / ".github" / "workflows" / "ci.yml").exists()
 
+def test_marketplace_manifest_valid():
+    m = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text())
+    assert m["name"] == "api-warehouse"
+    plugins = m["plugins"]
+    assert any(p["name"] == "api-warehouse" and p["source"] == "./" for p in plugins)
+
 def test_codex_plugin_manifest_valid():
     m = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text())
     assert m["name"] == "api-warehouse"

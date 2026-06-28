@@ -1,0 +1,33 @@
+{
+  "name": "api-warehouse",
+  "owner": {
+    "name": "Dhilip Subramanian",
+    "url": "https://github.com/sdhilip200"
+  },
+  "metadata": {
+    "description": "Marketplace for the api-warehouse plugin — any API's docs to raw data in your warehouse.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "api-warehouse",
+      "description": "Point a coding agent at any API's docs -> client-ready assessment, sample data, and raw data landed in your warehouse. Secure, validated, raw-landing only.",
+      "author": {
+        "name": "Dhilip Subramanian",
+        "url": "https://github.com/sdhilip200"
+      },
+      "homepage": "https://github.com/sdhilip200/api-warehouse",
+      "tags": [
+        "data-engineering",
+        "api",
+        "etl",
+        "elt",
+        "dlt",
+        "data-pipeline",
+        "ingestion",
+        "warehouse"
+      ],
+      "source": "./"
+    }
+  ]
+}

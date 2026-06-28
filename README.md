@@ -143,7 +143,7 @@ The orchestrator runs `connect → assess`, pauses at the checkpoint so you can 
 
 ```text
 /plugin marketplace add https://github.com/sdhilip200/api-warehouse
-/plugin install api-warehouse
+/plugin install api-warehouse@api-warehouse
 ```
 
 **Prerequisites for the `land` / `validate` steps** (the `connect` / `assess` steps need nothing extra):
