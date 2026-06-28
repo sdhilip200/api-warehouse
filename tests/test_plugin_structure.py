@@ -13,7 +13,7 @@ def test_package_imports():
     assert api_warehouse.__version__
 
 
-REFERENCES = ["security", "auth-patterns", "pagination-patterns", "incremental-detection", "destinations"]
+REFERENCES = ["security", "auth-patterns", "pagination-patterns", "incremental-detection", "destinations", "running-evals", "anti-slop"]
 
 def test_reference_docs_exist_and_nonempty():
     for ref in REFERENCES:
@@ -83,6 +83,20 @@ def test_all_skills_have_unique_names():
         m = re.search(r"name:\s*(\S+)", fm)
         names.append(m.group(1))
     assert len(names) == len(set(names))
+
+def test_every_skill_has_evals_and_memory():
+    for s in SKILLS:
+        evals = ROOT / "skills" / s / "EVALS.md"
+        memory = ROOT / "skills" / s / "MEMORY.md"
+        assert evals.exists(), f"{s} missing EVALS.md"
+        assert memory.exists(), f"{s} missing MEMORY.md"
+        assert len(evals.read_text().strip()) > 100, f"{s} EVALS.md too thin"
+
+def test_skills_wire_the_eval_loop():
+    for s in SKILLS:
+        body = (ROOT / "skills" / s / "SKILL.md").read_text()
+        assert "running-evals.md" in body, f"{s} does not link the eval loop"
+        assert "EVALS.md" in body, f"{s} does not reference its EVALS.md"
 
 def test_readme_has_install_and_positioning():
     r = (ROOT / "README.md").read_text()

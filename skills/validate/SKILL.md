@@ -1,30 +1,32 @@
 ---
 name: validate
 description: >
-  Use this skill when the user wants to validate loaded data, reconcile API vs
-  warehouse counts, run control-total checks, verify completeness of a landing run,
-  or compare source records against what was loaded.
-  Trigger phrases include: "validate loaded data", "reconcile counts", "control totals",
-  "check completeness", "verify the load", "compare API vs warehouse", or any request
-  to confirm that loaded rows match the source API.
+  Use whenever the user wants to validate or reconcile loaded data against the source API,
+  check row counts or control totals, verify a load was complete, or confirm that warehouse
+  data matches what the API returned — even if they don't say "validate". Trigger phrases
+  include: "did everything land?", "check the counts", "reconcile the table", "verify the
+  load", "compare API vs warehouse", "are the rows correct?", or any request to confirm
+  that a loaded table matches its source.
 ---
 
-# validate — Best-Effort Control-Total Reconciliation
+# validate — Control-Total Reconciliation
 
 ## Overview
 
-This skill re-pulls a bounded sample from the source API, profiles both the source
-sample and the loaded warehouse table, reconciles the two profiles, and renders a
-`validation.html` report.
+Re-pull a bounded sample from the source API, profile both the sample and the loaded
+warehouse table with `profile_records`, reconcile the two profiles with `reconcile`, and
+write a `validation.html` report via `render_validation`.
 
-**Validation is best-effort.** When the API does not expose a total-row-count endpoint,
-or when column types differ between source and destination, individual checks are marked
-`skipped` rather than fabricated. Never claim an exact match that was not actually
-computed.
+Validation is best-effort. When the API exposes no total-count endpoint, or when column
+types differ between source and destination, individual checks are marked `skipped` rather
+than fabricated. Never claim an exact match that was not actually computed — see
+`../../references/anti-slop.md` for the honesty standard this report must meet.
 
-**Pre-requisites:**
-- `endpoints.json` produced by `assess` must exist.
-- The warehouse table loaded by `land` must be queryable.
+Pre-requisites: `endpoints.json` produced by `assess` must exist; the warehouse table
+loaded by `land` must be queryable.
+
+Check `MEMORY.md` before starting — it records API-specific quirks discovered in prior
+runs (e.g., endpoints that expose no total count, pagination edge cases).
 
 ---
 
@@ -32,11 +34,10 @@ computed.
 
 Ask the user:
 
-> Which endpoint / table should we validate?
-> Please provide:
+> Which endpoint / table should we validate? Please provide:
 > 1. The endpoint name (from `endpoints.json`) to re-pull from the source API.
 > 2. The warehouse table name (e.g. `raw.posts`) to compare against.
-> 3. A row limit for the source re-pull (default: 1000 rows — keep it bounded).
+> 3. A row limit for the source re-pull (default: 1000 rows).
 
 Wait for the user's answer before continuing.
 
@@ -44,9 +45,8 @@ Wait for the user's answer before continuing.
 
 ## Step 2 — Re-pull a Bounded Source Sample
 
-Read `endpoints.json` to get the endpoint URL, auth config, and pagination settings.
-Fetch up to the agreed row limit from the source API. Use the same auth approach
-as `land` (bearer token from env var if `auth.type == "bearer"`):
+Read `endpoints.json` and locate the target endpoint by iterating over `spec["resources"]`.
+Fetch up to the agreed row limit using the same auth as `land`:
 
 ```python
 import json, os, requests
@@ -54,7 +54,6 @@ import json, os, requests
 with open("endpoints.json") as f:
     spec = json.load(f)
 
-# Locate the target endpoint
 endpoint = next(ep for ep in spec["resources"] if ep["name"] == TARGET_ENDPOINT)
 url = spec["base_url"].rstrip("/") + endpoint["path"]
 headers = {}
@@ -62,32 +61,29 @@ if spec["auth"]["type"] == "bearer":
     token_env = spec["auth"]["token_env"]
     headers["Authorization"] = f"Bearer {os.environ[token_env]}"
 
-# Fetch bounded pages until ROW_LIMIT is reached
 source_records = []
-params = {"per_page": 100}  # adjust to API's page-size parameter name
+params = {"per_page": 100}
 while url and len(source_records) < ROW_LIMIT:
     resp = requests.get(url, headers=headers, params=params, timeout=30)
     resp.raise_for_status()
     page = resp.json()
-    # Unwrap list at known key, or use list directly
     rows = page if isinstance(page, list) else page.get(endpoint["name"], page.get("data", page.get("results", [])))
     source_records.extend(rows)
-    # Follow next-page link if present; stop when none
     url = (page.get("links") or {}).get("next") or (page.get("pagination") or {}).get("next_url")
-    params = {}  # next-page URL already contains params
+    params = {}
 
 source_records = source_records[:ROW_LIMIT]
 print(f"Source sample: {len(source_records)} records")
 ```
 
-If the API returns no usable total-count header or next-page link, note this — the
-row-count check may be `skipped`.
+If the API returns no usable total-count header or next-page link, note this. The
+row-count check will be `skipped` — record the quirk in `MEMORY.md` for future runs.
 
 ---
 
 ## Step 3 — Query the Warehouse Table
 
-Pull the same rows from the loaded table. Use the destination's native client:
+Pull the same number of rows from the loaded table:
 
 ```python
 # DuckDB example
@@ -97,7 +93,7 @@ loaded_records = con.execute(f"SELECT * FROM {WAREHOUSE_TABLE} LIMIT {ROW_LIMIT}
 print(f"Loaded sample: {len(loaded_records)} records")
 ```
 
-Adapt to BigQuery / Snowflake / Postgres as needed (see `references/destinations.md`).
+Adapt to BigQuery / Snowflake / Postgres using the destination's native client.
 
 ---
 
@@ -114,6 +110,8 @@ print("Loaded profile:", loaded_profile["row_count"], "rows,", len(loaded_profil
 ```
 
 `profile_records` returns `{"row_count": int, "columns": {name: {type, null_count, ...}}}`.
+Numeric columns get `sum/min/max`; timestamp columns get `min/max`; text columns get
+`distinct_count` and top-5 values.
 
 ---
 
@@ -123,8 +121,6 @@ print("Loaded profile:", loaded_profile["row_count"], "rows,", len(loaded_profil
 from api_warehouse.reconcile import reconcile
 
 result = reconcile(source_profile, loaded_profile)
-# result: {"checks": [...], "ok": bool}
-# Each check: {"name": str, "kind": str, "status": "pass"|"fail"|"skipped", "detail": str}
 
 passed  = sum(1 for c in result["checks"] if c["status"] == "pass")
 failed  = sum(1 for c in result["checks"] if c["status"] == "fail")
@@ -132,12 +128,9 @@ skipped = sum(1 for c in result["checks"] if c["status"] == "skipped")
 print(f"Reconciliation: {passed} passed, {failed} failed, {skipped} skipped")
 ```
 
-Checks are marked `skipped` (not `fail`) when:
-- A count or stat is unavailable on one or both sides.
-- Column types differ between source and warehouse.
-- No comparable statistic exists for a column type.
-
-Do **not** treat `skipped` as a failure; report it honestly as "check not computable."
+Checks are marked `skipped` when a stat is unavailable on either side, column types differ,
+or no comparable statistic exists for a column type. `skipped` means the check could not
+be computed, not that data is correct or incorrect. Do not treat it as a failure.
 
 ---
 
@@ -152,31 +145,39 @@ with open("validation.html", "w") as f:
 print("Report written to validation.html")
 ```
 
-`render_validation` accepts the dict returned by `reconcile` and produces a
-self-contained `validation.html` with pass/fail/skipped rows colour-coded.
+`render_validation` accepts the dict returned by `reconcile` and writes a self-contained
+HTML file with pass/fail/skipped rows colour-coded.
 
 ---
 
-## Step 7 — Present Results
+## Step 7 — Self-Check (Evals)
+
+Before presenting results to the user, run the eval loop defined in
+`../../references/running-evals.md` using the checks in `EVALS.md`. Spin up a grader
+agent with a clean context, pass it `EVALS.md` and `validation.html`, and iterate until
+every check is `pass` or `skipped` (or 5 rounds have elapsed). Report any remaining
+failures plainly.
+
+---
+
+## Step 8 — Present Results
 
 Tell the user the reconciliation summary:
 
 > Validation complete.
 > - **X** checks passed
 > - **Y** checks failed
-> - **Z** checks skipped (source stat unavailable or types differ)
+> - **Z** checks skipped (stat unavailable or types differ)
 >
 > Report saved to `validation.html`. Open it in a browser to inspect each check.
 
-If any checks **failed**:
-- Row-count mismatch → the load may be incomplete. Re-run `land` or investigate
-  pagination gaps.
-- Numeric sum mismatch → possible data transformation or rounding issue.
-- Timestamp range mismatch → possible timezone normalisation difference.
+If checks **failed**: a row-count mismatch suggests an incomplete load or a pagination
+gap. A numeric sum mismatch points to a transformation or rounding difference. A
+timestamp range mismatch usually means timezone normalisation differs between source
+and warehouse.
 
-If checks are **skipped**:
-- Remind the user that skipped checks mean the comparison was not possible, not
-  that data is correct or incorrect. Consider widening the sample or using a
-  full-table count query if the source API supports it.
+If checks are **skipped**: the comparison was not possible for those fields — data is
+neither confirmed correct nor incorrect. Widening the sample or querying a full-table
+count (if the source API supports it) may resolve some skips.
 
-Do **not** claim completeness when some checks are skipped.
+Do not claim completeness when checks are skipped.
