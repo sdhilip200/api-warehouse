@@ -9,10 +9,7 @@
 
 ## Demo
 
-<!-- GIF placeholder: replace with a screen recording of the full connect → validate loop -->
-![demo placeholder](docs/demo-placeholder.png)
-
-*Coming soon: a GIF showing `/assess https://jsonplaceholder.typicode.com` through to DuckDB landing and validation report.*
+*Demo GIF coming soon — paste any API docs link and watch it produce an assessment + load data.*
 
 ---
 
@@ -24,7 +21,7 @@ A data engineer handed a new API repeatedly does the same manual work: read the 
 
 | Tool | What it does | What it leaves to a human |
 |------|--------------|--------------------------|
-| **dlt** ([dlt-hub/dlt](https://github.com/dlt-hub/dlt), 5.5k★) | The *load engine*: schema inference, incremental, schema evolution, destinations (BigQuery, Snowflake, Postgres, DuckDB). | **Reading the docs and writing the config** (base URL, auth, pagination, primary key, cursor). `dlt-init-openapi` only works from machine-readable OpenAPI — useless for HTML-only docs. |
+| **dlt** ([dlt-hub/dlt](https://github.com/dlt-hub/dlt), 5k+ stars) | The *load engine*: schema inference, incremental, schema evolution, destinations (BigQuery, Snowflake, Postgres, DuckDB). | **Reading the docs and writing the config** (base URL, auth, pagination, primary key, cursor). `dlt-init-openapi` only works from machine-readable OpenAPI — useless for HTML-only docs. |
 | **printing-press** | Generates an agent-native CLI + MCP to *call* an API from any spec/site/HAR. | Not a warehouse-landing pipeline; no schema-evolving incremental load; no DE assessment/validation deliverable. |
 | **api-warehouse** (this) | The **brain** that reads *human* API docs and produces the config dlt forces you to hand-write, **plus** the data-engineering deliverables no other tool packages. | Transformation and downstream modeling — deliberately out of scope (raw landing only). |
 

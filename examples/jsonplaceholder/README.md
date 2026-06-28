@@ -84,7 +84,7 @@ To land into Postgres instead, set credentials in `.dlt/secrets.toml`:
 
 ```toml
 [destination.postgres]
-connection_string = "postgresql://user:pass@host:5432/db"
+connection_string = "postgresql://user:pass@host:5432/db"  # replace with your own connection string (never commit real credentials)
 ```
 
 Then run:
